@@ -6,10 +6,14 @@ Where can I learn Python?
 
 def schools_by_topic(mongo_collection, topic):
     """
-     returns the list of school having a specific topic
+    Returns the list of schools having a specific topic.
 
-    :param mongo_collection:
-    :param topic:
-    :return:
+    Args:
+        mongo_collection: pymongo collection object.
+        topic (string): The topic to search for.
+
+    Returns:
+        A list of schools with the specified topic.
     """
+
     return mongo_collection.find({"topics": topic})
