@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Redis module
+exercise.py : Redis module
 """
 import sys
 from functools import wraps
@@ -14,10 +14,13 @@ UnionOfTypes = Union[str, bytes, int, float]
 
 def count_calls(method: Callable) -> Callable:
     """
-    a system to count how many
-    times methods of the Cache class are called.
-    :param method:
-    :return:
+    Description: Decorator function to count the number of calls to a method.
+
+    Args:
+        method (Callable): The method to be decorated.
+
+    Returns:
+        Callable: The decorated method.
     """
     key = method.__qualname__
 
@@ -38,10 +41,10 @@ def count_calls(method: Callable) -> Callable:
 
 def call_history(method: Callable) -> Callable:
     """
-    add its input parameters to one list
-    in redis, and store its output into another list.
-    :param method:
-    :return:
+    Add its input parameters to one list in Redis and store its output into another list.
+
+    :param method: The method to be decorated.
+    :return: The decorated method.
     """
     key = method.__qualname__
     i = "".join([key, ":inputs"])
@@ -49,7 +52,7 @@ def call_history(method: Callable) -> Callable:
 
     @wraps(method)
     def wrapper(self, *args, **kwargs):
-        """ Wrapp """
+        """Wrapper function"""
         self._redis.rpush(i, str(args))
         res = method(self, *args, **kwargs)
         self._redis.rpush(o, str(res))
@@ -65,7 +68,7 @@ class Cache:
 
     def __init__(self):
         """
-        constructor of the redis model
+        Constructor of the Redis model
         """
         self._redis = redis.Redis()
         self._redis.flushdb()
@@ -74,11 +77,13 @@ class Cache:
     @call_history
     def store(self, data: UnionOfTypes) -> str:
         """
-        generate a random key (e.g. using uuid),
-         store the input data in Redis using the
-          random key and return the key.
-        :param data:
-        :return:
+        Store data in the cache and return its key.
+
+        Args:
+            data (Union[object, List[object]]): The data to be stored in the cache.
+
+        Returns:
+            str: The key under which the data is stored.
         """
         key = str(uuid4())
         self._redis.mset({key: data})
@@ -87,11 +92,14 @@ class Cache:
     def get(self, key: str, fn: Optional[Callable] = None) \
             -> UnionOfTypes:
         """
-        convert the data back
-        to the desired format
-        :param key:
-        :param fn:
-        :return:
+        Retrieve data from the cache using the provided key.
+
+        Args:
+            key (str): The key associated with the data in the cache.
+            fn (Optional[Callable]): A function to apply to the retrieved data (default: None).
+
+        Returns:
+            Union[object, None]: The retrieved data from the cache, optionally processed by the provided function.
         """
         if fn:
             return fn(self._redis.get(key))
@@ -99,9 +107,19 @@ class Cache:
         return data
 
     def get_int(self: bytes) -> int:
-        """get a number"""
+        """
+        Convert bytes to an integer.
+
+        Returns:
+            int: The integer representation of the bytes.
+        """
         return int.from_bytes(self, sys.byteorder)
 
     def get_str(self: bytes) -> str:
-        """get a string"""
+        """
+        Decode bytes to a string using utf-8 encoding.
+
+        Returns:
+            str: The decoded string.
+        """
         return self.decode("utf-8")
