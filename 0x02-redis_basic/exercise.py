@@ -14,7 +14,8 @@ UnionOfTypes = Union[str, bytes, int, float]
 
 def count_calls(method: Callable) -> Callable:
     """
-    Description: Decorator function to count the number of calls to a method.
+    Description: Decorator function to count \
+            the number of calls to a method.
 
     Args:
         method (Callable): The method to be decorated.
@@ -41,7 +42,8 @@ def count_calls(method: Callable) -> Callable:
 
 def call_history(method: Callable) -> Callable:
     """
-    Add its input parameters to one list in Redis and store its output into another list.
+    Add its input parameters to one list in Redis \
+            and store its output into another list.
 
     :param method: The method to be decorated.
     :return: The decorated method.
@@ -80,7 +82,8 @@ class Cache:
         Store data in the cache and return its key.
 
         Args:
-            data (Union[object, List[object]]): The data to be stored in the cache.
+            data (Union[object, List[object]]): \
+                    The data to be stored in the cache.
 
         Returns:
             str: The key under which the data is stored.
@@ -95,11 +98,11 @@ class Cache:
         Retrieve data from the cache using the provided key.
 
         Args:
-            key (str): The key associated with the data in the cache.
-            fn (Optional[Callable]): A function to apply to the retrieved data (default: None).
+            key (str): The key associated with the data.
+            fn (Optional[Callable]): A function to apply (default: None).
 
         Returns:
-            Union[object, None]: The retrieved data from the cache, optionally processed by the provided function.
+            Union[object, None]: The retrieved data, optionally processed.
         """
         if fn:
             return fn(self._redis.get(key))
